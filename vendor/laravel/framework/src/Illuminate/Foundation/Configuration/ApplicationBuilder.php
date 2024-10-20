@@ -28,6 +28,13 @@ class ApplicationBuilder
     protected array $pendingProviders = [];
 
     /**
+     * Any additional routing callbacks that should be invoked while registering routes.
+     *
+     * @var array
+     */
+    protected array $additionalRoutingCallbacks = [];
+
+    /**
      * The Folio / page middleware that have been defined by the user.
      *
      * @var array
@@ -203,7 +210,7 @@ class ApplicationBuilder
             }
 
             if (is_string($health)) {
-                Route::middleware('web')->get($health, function () {
+                Route::get($health, function () {
                     Event::dispatch(new DiagnosingHealth);
 
                     return View::file(__DIR__.'/../resources/health-up.blade.php');
@@ -220,6 +227,10 @@ class ApplicationBuilder
                 } else {
                     Route::middleware('web')->group($web);
                 }
+            }
+
+            foreach ($this->additionalRoutingCallbacks as $callback) {
+                $callback();
             }
 
             if (is_string($pages) &&
@@ -300,6 +311,8 @@ class ApplicationBuilder
         $this->app->afterResolving(ConsoleKernel::class, function ($kernel) use ($paths) {
             $this->app->booted(fn () => $kernel->addCommandRoutePaths($paths));
         });
+
+        return $this;
     }
 
     /**

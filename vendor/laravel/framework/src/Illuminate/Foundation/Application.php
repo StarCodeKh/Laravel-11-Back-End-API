@@ -45,7 +45,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      *
      * @var string
      */
-    const VERSION = '11.14.0';
+    const VERSION = '11.28.1';
 
     /**
      * The base path for the Laravel installation.
@@ -1018,6 +1018,8 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * @param  string  $abstract
      * @param  array  $parameters
      * @return mixed
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function make($abstract, array $parameters = [])
     {
@@ -1033,6 +1035,9 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * @param  array  $parameters
      * @param  bool  $raiseEvents
      * @return mixed
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Illuminate\Contracts\Container\CircularDependencyException
      */
     protected function resolve($abstract, $parameters = [], $raiseEvents = true)
     {
@@ -1421,7 +1426,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     /**
      * Get the service providers that have been loaded.
      *
-     * @return array<string, boolean>
+     * @return array<string, bool>
      */
     public function getLoadedProviders()
     {
